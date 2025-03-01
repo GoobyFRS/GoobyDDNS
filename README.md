@@ -16,8 +16,9 @@ python app.py
 env
 
 ```txt
-LINODE_API_KEY=data
-DOMAIN_NAME=example.org
-DNS_RECORD_ID=1234
+LINODE_API_KEY=your_api_key
 LINODE_API_VERSION=v4
-
+ROOT_DOMAIN_NAME_HR=example.org
+SUBDOMAIN_RECORD_ID=0123uuid
+DOMAIN_RECORD_ID=4567uuid
+```

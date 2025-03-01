@@ -3,44 +3,40 @@ import json
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables from .env file.
 load_dotenv(dotenv_path=".env")
-API_VERSION = os.getenv("LINODE_API_VERSION")
-DOMAIN_NAME = os.getenv("DOMAIN_NAME")
+LINODE_API_VERSION = os.getenv("LINODE_API_VERSION")
 LINODE_API_KEY = os.getenv("LINODE_API_KEY")
-DNS_RECORD_ID = os.getenv("DNS_RECORD_ID")
+ROOT_DOMAIN_NAME_HR = os.getenv("ROOT_DOMAIN_NAME")
+SUBDOMAIN_RECORD_ID = os.getenv("SUBDOMAIN_RECORD_ID")
+DOMAIN_RECORD_ID = os.getenv("DOMAIN_RECORD_ID")
 
-# Debugging: Check if the environment variables are loaded
-print(f"API Version: {API_VERSION}")
-print(f"Linode API Key: {LINODE_API_KEY}")
-print(f"Domain Name: {DOMAIN_NAME}")
-print(f"DNS Record ID: {DNS_RECORD_ID}")
-
-# Fetch the public IP from ipify
-def get_public_ip():
-    response = requests.get('https://api64.ipify.org?format=json')
+# Checking my WAN IPv4 address using ipify.
+def get_my_wan_ipv4():
+    response = requests.get("https://api.ipify.org?format=json")
     if response.status_code == 200:
-        ip_data = response.json()
-        return ip_data.get("ip")
+        my_public_ipv4 = response.json()
+        return my_public_ipv4.get("ip")
     else:
-        print("Failed to retrieve public IP")
+        print("Failed to retrieve public IPv4 address.")
         return None
 
 # Update DNS record on Linode
 def update_dns_record(my_public_ip):
-    # Determine if the IP is IPv6 or IPv4 and set the record type accordingly
-    ip_type = "AAAA" if ":" in my_public_ip else "A"
-
-    api_key = os.getenv('LINODE_API_KEY')
-    domain_name = os.getenv('DOMAIN_NAME')
-    dns_record_id = os.getenv('DNS_RECORD_ID')
-
-    if not api_key or not domain_name or not dns_record_id:
+    LINODE_API_VERSION = os.getenv("LINODE_API_VERSION")
+    LINODE_API_KEY = os.getenv("LINODE_API_KEY")
+    SUBDOMAIN_RECORD_ID = os.getenv("SUBDOMAIN_RECORD_ID")
+    DOMAIN_RECORD_ID = os.getenv("DOMAIN_RECORD_ID")
+    # Basic IP Version checking. Currently is not used as the result will always result in an A record.
+    ipv_type = "AAAA" if ":" in my_public_ip else "A"
+    # Ensure all required variables load before sending a webhook.
+    if not LINODE_API_VERSION or not LINODE_API_KEY or not DOMAIN_RECORD_ID or not SUBDOMAIN_RECORD_ID:
         print("Missing necessary environment variables.")
         return
 
-    # Define the Linode API endpoint
-    url = f"https://api.linode.com/{API_VERSION}/domains/{domain_name}/records/{dns_record_id}"
+    # Linode API Endpoint
+    # https://techdocs.akamai.com/linode-api/reference/api-summary
+    url = f"https://api.linode.com/{LINODE_API_VERSION}/domains/{DOMAIN_RECORD_ID}/records/{SUBDOMAIN_RECORD_ID}"
 
     # Headers for Linode API authentication
     headers = {
@@ -53,7 +49,7 @@ def update_dns_record(my_public_ip):
     data = {
         "target": my_public_ip,
         "name": "ddns-test1.grhost.net",  # Modify this as needed
-        "type": ip_type,  # Use "AAAA" for IPv6 and "A" for IPv4
+        "type": ipv_type,  # Use "AAAA" for IPv6 and "A" for IPv4
         "ttl": 300
     }
 
@@ -66,10 +62,10 @@ def update_dns_record(my_public_ip):
 
 # Main function to check IP and update DNS
 def main():
-    public_ip = get_public_ip()
-    if public_ip:
-        print(f"Public IP: {public_ip}")
-        update_dns_record(public_ip)
+    my_public_ipv4 = get_my_wan_ipv4()
+    if my_public_ipv4:
+        print(f"Public IP: {my_public_ipv4}")
+        update_dns_record(my_public_ipv4)
 
 if __name__ == '__main__':
     main()
