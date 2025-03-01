@@ -44,14 +44,14 @@ def update_dns_record(my_public_ip):
     }
 
     # Payload to update the DNS record with the new IP address.
-    data = {
+    payload = {
         "target": my_public_ip,
         "name": FQDN,
         "type": ipv_type,
         "ttl": 300
     }
 
-    response = requests.put(url, headers=headers, data=json.dumps(data))
+    response = requests.put(url, headers=headers, data=json.dumps(payload))
 
     if response.status_code == 200:
         print(f"DNS record for {FQDN} updated successfully!")
