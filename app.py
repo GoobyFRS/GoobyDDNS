@@ -1,15 +1,17 @@
+#!/usr/bin/env python3
 import requests
 import json
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file.
+# Load the DOTENV file.
 load_dotenv(dotenv_path=".env")
 LINODE_API_VERSION = os.getenv("LINODE_API_VERSION")
 LINODE_API_KEY = os.getenv("LINODE_API_KEY")
 ROOT_DOMAIN_NAME_HR = os.getenv("ROOT_DOMAIN_NAME")
 SUBDOMAIN_RECORD_ID = os.getenv("SUBDOMAIN_RECORD_ID")
 DOMAIN_RECORD_ID = os.getenv("DOMAIN_RECORD_ID")
+FQDN = os.getenv("FQDN")
 
 # Checking my WAN IPv4 address using ipify.
 def get_my_wan_ipv4():
@@ -23,10 +25,6 @@ def get_my_wan_ipv4():
 
 # Update DNS record on Linode
 def update_dns_record(my_public_ip):
-    LINODE_API_VERSION = os.getenv("LINODE_API_VERSION")
-    LINODE_API_KEY = os.getenv("LINODE_API_KEY")
-    SUBDOMAIN_RECORD_ID = os.getenv("SUBDOMAIN_RECORD_ID")
-    DOMAIN_RECORD_ID = os.getenv("DOMAIN_RECORD_ID")
     # Basic IP Version checking. Currently is not used as the result will always result in an A record.
     ipv_type = "AAAA" if ":" in my_public_ip else "A"
     # Ensure all required variables load before sending a webhook.
@@ -45,20 +43,20 @@ def update_dns_record(my_public_ip):
         "authorization": f"Bearer {LINODE_API_KEY}"
     }
 
-    # Payload to update the DNS record with the new IP address
+    # Payload to update the DNS record with the new IP address.
     data = {
         "target": my_public_ip,
-        "name": "ddns-test1.grhost.net",  # Modify this as needed
-        "type": ipv_type,  # Use "AAAA" for IPv6 and "A" for IPv4
+        "name": FQDN,
+        "type": ipv_type,
         "ttl": 300
     }
 
     response = requests.put(url, headers=headers, data=json.dumps(data))
 
     if response.status_code == 200:
-        print("DNS record updated successfully!")
+        print(f"DNS record for {FQDN} updated successfully!")
     else:
-        print(f"Failed to update DNS record: {response.status_code} {response.text}")
+        print(f"Failed to update DNS {ipv_type} record: {response.status_code} {response.text}")
 
 # Main function to check IP and update DNS
 def main():
