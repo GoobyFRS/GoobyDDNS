@@ -11,6 +11,8 @@ cd /your/desired/path/
 git clone https://github.com/GoobyFRS/GoobyDDNS.git
 chmod +x app.py
 touch .env
+source venv/bin/activate
+python3 ./app.py
 ```
 
 Update the dotenv file with proper values. Be sure to update the ```.sh``` file with the proper path to this cloned repo.
