@@ -33,7 +33,7 @@ crontab -e
 
 ### Project Development Setup - Windows
 
-```txt
+```shell
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
