@@ -37,6 +37,6 @@ crontab -e
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
-'''
+```
 
 Windows Users should consider using [GoobyDDNS_Winows](https://github.com/GoobyFRS/GoobyDDNS-Windows) instead!
