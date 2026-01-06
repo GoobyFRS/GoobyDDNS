@@ -33,22 +33,10 @@ crontab -e
 
 ### Project Development Setup - Windows
 
-Windows Users should consider [GoobyDDNS_Winows]().
-
 ```txt
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
 '''
 
-#### DOTENV File Example
-
-```txt
-LINODE_API_KEY=your_api_key
-LINODE_API_VERSION=v4
-ROOT_DOMAIN_NAME_HR=example.org
-SUBDOMAIN_RECORD_ID=0123uuid
-DOMAIN_RECORD_ID=4567uuid
-FQDN=ddns.example.org
-```
-
+Windows Users should consider using [GoobyDDNS_Winows](https://github.com/GoobyFRS/GoobyDDNS-Windows) instead!
